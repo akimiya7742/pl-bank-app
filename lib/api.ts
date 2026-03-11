@@ -14,6 +14,8 @@ export interface UserBalance {
 
 export interface LeaderboardUser {
   user_id: string
+  username: string
+  avatar: string | null
   cash: number
   bank: number
   total: number
@@ -112,15 +114,23 @@ export async function getLeaderboard(
     `/guilds/${GUILD_ID}/users?sort=total&limit=${limit}&page=${page}`
   )
 
-  return (data.users || []).map(
-    (user: any, index: number) => ({
-      user_id: user.user_id,
-      cash: user.cash || 0,
-      bank: user.bank || 0,
-      total: (user.cash || 0) + (user.bank || 0),
-      rank: (page - 1) * limit + index + 1,
+  // Fetch Discord user details for all users in parallel
+  const leaderboardUsers = await Promise.all(
+    (data.users || []).map(async (user: any, index: number) => {
+      const discordUser = await getDiscordUser(user.user_id)
+      return {
+        user_id: user.user_id,
+        username: discordUser.username,
+        avatar: discordUser.avatar,
+        cash: user.cash || 0,
+        bank: user.bank || 0,
+        total: (user.cash || 0) + (user.bank || 0),
+        rank: (page - 1) * limit + index + 1,
+      }
     })
   )
+
+  return leaderboardUsers
 }
 
 export async function getDiscordMembers(guildId: string): Promise<DiscordMember[]> {
@@ -140,4 +150,34 @@ export async function getDiscordMembers(guildId: string): Promise<DiscordMember[
   }
 
   return response.json()
+}
+
+export async function getDiscordUser(userId: string): Promise<{
+  id: string
+  username: string
+  avatar: string | null
+}> {
+  const botToken = process.env.DISCORD_BOT_TOKEN || ''
+  
+  const response = await fetch(`https://discord.com/api/v10/users/${userId}`, {
+    headers: {
+      'Authorization': `Bot ${botToken}`,
+    },
+  })
+
+  if (!response.ok) {
+    // Return a fallback if user not found
+    return {
+      id: userId,
+      username: `User ${userId}`,
+      avatar: null,
+    }
+  }
+
+  const user = await response.json()
+  return {
+    id: user.id,
+    username: user.username,
+    avatar: user.avatar,
+  }
 }

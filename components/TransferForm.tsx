@@ -97,14 +97,10 @@ export function TransferForm() {
               <SelectValue placeholder="Select a member" />
             </SelectTrigger>
             <SelectContent className="bg-slate-700 border-slate-600">
-              {membersLoading ? (
-                <SelectItem value="" disabled>
-                  Loading members...
-                </SelectItem>
+              {membersLoading && members.length === 0 ? (
+                <div className="p-4 text-center text-slate-400">Loading members...</div>
               ) : members.length === 0 ? (
-                <SelectItem value="" disabled>
-                  No members available
-                </SelectItem>
+                <div className="p-4 text-center text-slate-400">No members available</div>
               ) : (
                 members.map((member) => (
                   <SelectItem key={member.id} value={member.id}>

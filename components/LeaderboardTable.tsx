@@ -71,9 +71,16 @@ export function LeaderboardTable() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-white">
-                      <code className="text-sm bg-slate-800 px-2 py-1 rounded">
-                        {user.user_id}
-                      </code>
+                      <div className="flex items-center gap-3">
+                        {user.avatar && (
+                          <img
+                            src={`https://cdn.discordapp.com/avatars/${user.user_id}/${user.avatar}.png`}
+                            alt={user.username}
+                            className="w-8 h-8 rounded-full"
+                          />
+                        )}
+                        <span className="font-medium">{user.username}</span>
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-right text-green-400 font-semibold">
                       {user.cash.toLocaleString()}
