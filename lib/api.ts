@@ -114,21 +114,29 @@ export async function getLeaderboard(
     `/guilds/${GUILD_ID}/users?sort=total&limit=${limit}&page=${page}`
   )
 
-  // Fetch Discord user details for all users in parallel
-  const leaderboardUsers = await Promise.all(
-    (data.users || []).map(async (user: any, index: number) => {
-      const discordUser = await getDiscordUser(user.user_id)
-      return {
-        user_id: user.user_id,
-        username: discordUser.username,
-        avatar: discordUser.avatar,
-        cash: user.cash || 0,
-        bank: user.bank || 0,
-        total: (user.cash || 0) + (user.bank || 0),
-        rank: (page - 1) * limit + index + 1,
-      }
+  // Fetch Discord user details sequentially with delay to avoid rate limiting
+  const leaderboardUsers: LeaderboardUser[] = []
+  const users = data.users || []
+
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i]
+    const discordUser = await getDiscordUser(user.user_id)
+    
+    leaderboardUsers.push({
+      user_id: user.user_id,
+      username: discordUser.username,
+      avatar: discordUser.avatar,
+      cash: user.cash || 0,
+      bank: user.bank || 0,
+      total: (user.cash || 0) + (user.bank || 0),
+      rank: (page - 1) * limit + i + 1,
     })
-  )
+
+    // Add delay between requests to avoid rate limiting (50ms between each user)
+    if (i < users.length - 1) {
+      await new Promise(resolve => setTimeout(resolve, 50))
+    }
+  }
 
   return leaderboardUsers
 }

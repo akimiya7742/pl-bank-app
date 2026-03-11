@@ -1,13 +1,36 @@
 'use client'
 
 import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { useLeaderboard } from '@/hooks/useLeaderboard'
-import { ChevronLeft, ChevronRight, Trophy } from 'lucide-react'
+import { Trophy, Loader } from 'lucide-react'
+import { useEffect, useRef, useCallback } from 'react'
 
 export function LeaderboardTable() {
-  const { users, loading, error, currentPage, setCurrentPage, refetch } =
-    useLeaderboard(50)
+  const { users, loading, error, hasMore, loadMore } = useLeaderboard(50)
+  const observerTarget = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Setup Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          loadMore()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current)
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current)
+      }
+    }
+  }, [hasMore, loading, loadMore])
 
   if (error) {
     return (
@@ -18,17 +41,17 @@ export function LeaderboardTable() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" ref={containerRef}>
       <Card className="overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-[75vh] overflow-y-auto">
           <table className="w-full">
-            <thead>
-              <tr className="border-b border-slate-700 bg-slate-900/50">
+            <thead className="sticky top-0 bg-slate-900/95 z-10">
+              <tr className="border-b border-slate-700">
                 <th className="px-6 py-3 text-left text-sm font-semibold text-slate-300">
                   Rank
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-slate-300">
-                  User ID
+                  User
                 </th>
                 <th className="px-6 py-3 text-right text-sm font-semibold text-slate-300">
                   Cash
@@ -42,15 +65,7 @@ export function LeaderboardTable() {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center">
-                    <div className="animate-pulse text-slate-400">
-                      Loading leaderboard...
-                    </div>
-                  </td>
-                </tr>
-              ) : users.length === 0 ? (
+              {users.length === 0 && !loading ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-8 text-center">
                     <div className="text-slate-400">No users found</div>
@@ -59,27 +74,34 @@ export function LeaderboardTable() {
               ) : (
                 users.map((user, index) => (
                   <tr
-                    key={user.user_id}
-                    className="border-b border-slate-700 hover:bg-slate-700/50 transition-colors"
+                    key={`${user.user_id}-${user.rank}`}
+                    className="border-b border-slate-700 hover:bg-slate-700/50 transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"
+                    style={{
+                      animationDelay: `${index * 30}ms`,
+                    }}
                   >
                     <td className="px-6 py-4 text-white font-semibold">
                       <div className="flex items-center gap-2">
                         {user.rank <= 3 && (
-                          <Trophy className="w-4 h-4 text-yellow-500" />
+                          <Trophy className="w-4 h-4 text-yellow-500 animate-pulse" />
                         )}
                         #{user.rank}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-white">
                       <div className="flex items-center gap-3">
-                        {user.avatar && (
+                        {user.avatar ? (
                           <img
                             src={`https://cdn.discordapp.com/avatars/${user.user_id}/${user.avatar}.png`}
                             alt={user.username}
-                            className="w-8 h-8 rounded-full"
+                            className="w-8 h-8 rounded-full ring-2 ring-slate-700 hover:ring-slate-600 transition-all"
                           />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-semibold">
+                            {user.username.charAt(0).toUpperCase()}
+                          </div>
                         )}
-                        <span className="font-medium">{user.username}</span>
+                        <span className="font-medium truncate">{user.username}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right text-green-400 font-semibold">
@@ -99,29 +121,18 @@ export function LeaderboardTable() {
         </div>
       </Card>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between">
-        <Button
-          variant="outline"
-          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1 || loading}
-        >
-          <ChevronLeft className="w-4 h-4 mr-2" />
-          Previous
-        </Button>
-
-        <div className="text-white text-sm">
-          Page {currentPage}
-        </div>
-
-        <Button
-          variant="outline"
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={users.length < 50 || loading}
-        >
-          Next
-          <ChevronRight className="w-4 h-4 ml-2" />
-        </Button>
+      {/* Infinite Scroll Trigger */}
+      <div ref={observerTarget} className="flex justify-center py-8">
+        {loading && hasMore ? (
+          <div className="flex items-center gap-2 text-slate-400">
+            <Loader className="w-4 h-4 animate-spin" />
+            <span>Loading more users...</span>
+          </div>
+        ) : hasMore ? (
+          <div className="text-slate-500 text-sm">Scroll to load more...</div>
+        ) : (
+          <div className="text-slate-500 text-sm">No more users to load</div>
+        )}
       </div>
     </div>
   )
