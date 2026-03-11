@@ -1,0 +1,144 @@
+/**
+ * UnbelievaBoat API Utility Functions
+ * All server-side only - never expose tokens to client
+ */
+
+const UNBELIEVABOAT_API_BASE = 'https://api.unbelievaboat.com'
+const TOKEN = process.env.UNBELIEVABOAT_TOKEN || ''
+const GUILD_ID = process.env.DISCORD_GUILD_ID || ''
+
+export interface UserBalance {
+  cash: number
+  bank: number
+}
+
+export interface LeaderboardUser {
+  user_id: string
+  cash: number
+  bank: number
+  total: number
+  rank: number
+}
+
+export interface DiscordMember {
+  user: {
+    id: string
+    username: string
+    avatar: string | null
+  }
+  nick: string | null
+}
+
+async function makeUnbelievaBoatRequest(
+  endpoint: string,
+  method: string = 'GET',
+  body?: unknown
+) {
+  const url = `${UNBELIEVABOAT_API_BASE}${endpoint}`
+  
+  const response = await fetch(url, {
+    method,
+    headers: {
+      'Authorization': TOKEN,
+      'Content-Type': 'application/json',
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  })
+
+  if (!response.ok) {
+    throw new Error(`UnbelievaBoat API error: ${response.statusText}`)
+  }
+
+  return response.json()
+}
+
+export async function getUserBalance(userId: string): Promise<UserBalance> {
+  const data = await makeUnbelievaBoatRequest(
+    `/guilds/${GUILD_ID}/users/${userId}`
+  )
+  return {
+    cash: data.cash || 0,
+    bank: data.bank || 0,
+  }
+}
+
+export async function transferMoney(
+  fromUserId: string,
+  toUserId: string,
+  amount: number,
+  reason?: string
+) {
+  // Validate amount
+  if (amount <= 0) {
+    throw new Error('Amount must be positive')
+  }
+
+  // Check sender's balance
+  const senderBalance = await getUserBalance(fromUserId)
+  const totalBalance = senderBalance.cash + senderBalance.bank
+
+  if (totalBalance < amount) {
+    throw new Error('Insufficient balance')
+  }
+
+  // Perform transfer using the API
+  // This assumes the API supports direct transfers or we need to use add/remove
+  const response = await makeUnbelievaBoatRequest(
+    `/guilds/${GUILD_ID}/users/${fromUserId}/money`,
+    'POST',
+    {
+      money: -amount,
+      reason: `Transfer to ${toUserId}: ${reason || ''}`,
+    }
+  )
+
+  // Add money to recipient
+  await makeUnbelievaBoatRequest(
+    `/guilds/${GUILD_ID}/users/${toUserId}/money`,
+    'POST',
+    {
+      money: amount,
+      reason: `Received from ${fromUserId}: ${reason || ''}`,
+    }
+  )
+
+  return response
+}
+
+export async function getLeaderboard(
+  limit: number = 10,
+  offset: number = 0
+): Promise<LeaderboardUser[]> {
+  const data = await makeUnbelievaBoatRequest(
+    `/guilds/${GUILD_ID}/leaderboard?limit=${limit}&offset=${offset}`
+  )
+
+  return (data.users || []).map(
+    (user: any, index: number) => ({
+      user_id: user.user_id,
+      cash: user.cash || 0,
+      bank: user.bank || 0,
+      total: (user.cash || 0) + (user.bank || 0),
+      rank: offset + index + 1,
+    })
+  )
+}
+
+export async function getDiscordMembers(guildId: string): Promise<DiscordMember[]> {
+  const botToken = process.env.DISCORD_BOT_TOKEN || ''
+  
+  const response = await fetch(
+    `https://discord.com/api/v10/guilds/${guildId}/members?limit=1000`,
+    {
+      headers: {
+        'Authorization': `Bot ${botToken}`,
+      },
+    }
+  )
+
+  if (!response.ok) {
+    throw new Error(`Discord API error: ${response.statusText}`)
+  }
+
+  return response.json()
+}
