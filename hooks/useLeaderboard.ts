@@ -10,17 +10,17 @@ export interface LeaderboardUser {
   rank: number
 }
 
-export function useLeaderboard(limit: number = 50, offset: number = 0) {
+export function useLeaderboard(limit: number = 50, page: number = 1) {
   const [users, setUsers] = useState<LeaderboardUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [currentOffset, setCurrentOffset] = useState(offset)
+  const [currentPage, setCurrentPage] = useState(page)
 
   const fetchLeaderboard = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(
-        `/api/leaderboard?limit=${limit}&offset=${currentOffset}`
+        `/api/leaderboard?limit=${limit}&page=${currentPage}`
       )
 
       if (!response.ok) {
@@ -37,7 +37,7 @@ export function useLeaderboard(limit: number = 50, offset: number = 0) {
     } finally {
       setLoading(false)
     }
-  }, [limit, currentOffset])
+  }, [limit, currentPage])
 
   useEffect(() => {
     fetchLeaderboard()
@@ -47,8 +47,8 @@ export function useLeaderboard(limit: number = 50, offset: number = 0) {
     users,
     loading,
     error,
-    currentOffset,
-    setCurrentOffset,
+    currentPage,
+    setCurrentPage,
     refetch: fetchLeaderboard,
   }
 }

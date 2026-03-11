@@ -6,7 +6,7 @@ import { useLeaderboard } from '@/hooks/useLeaderboard'
 import { ChevronLeft, ChevronRight, Trophy } from 'lucide-react'
 
 export function LeaderboardTable() {
-  const { users, loading, error, currentOffset, setCurrentOffset, refetch } =
+  const { users, loading, error, currentPage, setCurrentPage, refetch } =
     useLeaderboard(50)
 
   if (error) {
@@ -96,20 +96,20 @@ export function LeaderboardTable() {
       <div className="flex items-center justify-between">
         <Button
           variant="outline"
-          onClick={() => setCurrentOffset(Math.max(0, currentOffset - 50))}
-          disabled={currentOffset === 0 || loading}
+          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1 || loading}
         >
           <ChevronLeft className="w-4 h-4 mr-2" />
           Previous
         </Button>
 
         <div className="text-white text-sm">
-          Showing {currentOffset + 1} - {currentOffset + Math.min(50, users.length)}
+          Page {currentPage}
         </div>
 
         <Button
           variant="outline"
-          onClick={() => setCurrentOffset(currentOffset + 50)}
+          onClick={() => setCurrentPage(currentPage + 1)}
           disabled={users.length < 50 || loading}
         >
           Next

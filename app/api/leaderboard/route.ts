@@ -7,16 +7,16 @@ export async function GET(request: NextRequest) {
     await getUserIdOrThrow()
 
     const searchParams = request.nextUrl.searchParams
-    const limit = Math.min(parseInt(searchParams.get('limit') || '10'), 100)
-    const offset = Math.max(parseInt(searchParams.get('offset') || '0'), 0)
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100)
+    const page = Math.max(parseInt(searchParams.get('page') || '1'), 1)
 
-    const leaderboard = await getLeaderboard(limit, offset)
+    const leaderboard = await getLeaderboard(limit, page)
 
     return NextResponse.json({
       success: true,
       data: leaderboard,
       limit,
-      offset,
+      page,
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Internal server error'

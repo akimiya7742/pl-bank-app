@@ -3,7 +3,7 @@
  * All server-side only - never expose tokens to client
  */
 
-const UNBELIEVABOAT_API_BASE = 'https://api.unbelievaboat.com'
+const UNBELIEVABOAT_API_BASE = 'https://unbelievaboat.com/api/v1'
 const TOKEN = process.env.UNBELIEVABOAT_TOKEN || ''
 const GUILD_ID = process.env.DISCORD_GUILD_ID || ''
 
@@ -81,23 +81,22 @@ export async function transferMoney(
     throw new Error('Insufficient balance')
   }
 
-  // Perform transfer using the API
-  // This assumes the API supports direct transfers or we need to use add/remove
-  const response = await makeUnbelievaBoatRequest(
-    `/guilds/${GUILD_ID}/users/${fromUserId}/money`,
-    'POST',
+  // Deduct from sender (use negative amount)
+  await makeUnbelievaBoatRequest(
+    `/guilds/${GUILD_ID}/users/${fromUserId}`,
+    'PATCH',
     {
-      money: -amount,
+      cash: -amount,
       reason: `Transfer to ${toUserId}: ${reason || ''}`,
     }
   )
 
-  // Add money to recipient
-  await makeUnbelievaBoatRequest(
-    `/guilds/${GUILD_ID}/users/${toUserId}/money`,
-    'POST',
+  // Add to recipient
+  const response = await makeUnbelievaBoatRequest(
+    `/guilds/${GUILD_ID}/users/${toUserId}`,
+    'PATCH',
     {
-      money: amount,
+      cash: amount,
       reason: `Received from ${fromUserId}: ${reason || ''}`,
     }
   )
@@ -106,11 +105,11 @@ export async function transferMoney(
 }
 
 export async function getLeaderboard(
-  limit: number = 10,
-  offset: number = 0
+  limit: number = 50,
+  page: number = 1
 ): Promise<LeaderboardUser[]> {
   const data = await makeUnbelievaBoatRequest(
-    `/guilds/${GUILD_ID}/leaderboard?limit=${limit}&offset=${offset}`
+    `/guilds/${GUILD_ID}/users?sort=total&limit=${limit}&page=${page}`
   )
 
   return (data.users || []).map(
@@ -119,7 +118,7 @@ export async function getLeaderboard(
       cash: user.cash || 0,
       bank: user.bank || 0,
       total: (user.cash || 0) + (user.bank || 0),
-      rank: offset + index + 1,
+      rank: (page - 1) * limit + index + 1,
     })
   )
 }
