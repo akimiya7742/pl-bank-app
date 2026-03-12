@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/auth'
 import { Button } from '@/components/ui/button'
 import { TransferForm } from '@/components/TransferForm'
+import { TransactionHistory } from '@/components/TransactionHistory'
 import { BalanceDisplay } from '@/components/BalanceDisplay'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -53,10 +54,19 @@ export default async function TransferPage() {
             <BalanceDisplay />
           </div>
 
-          {/* Transfer Form */}
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-4">Send Money</h2>
-            <TransferForm />
+          {/* Main Content Grid */}
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Transfer Form */}
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-4">Send Money</h2>
+              <TransferForm />
+            </div>
+
+            {/* Transaction History */}
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-4">Recent Transactions</h2>
+              <TransactionHistory />
+            </div>
           </div>
         </div>
       </div>

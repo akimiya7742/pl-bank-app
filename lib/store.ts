@@ -65,3 +65,60 @@ export const useBalanceStore = create<BalanceStore>((set) => ({
       lastUpdated: Date.now(),
     }),
 }))
+
+export interface Transaction {
+  id: string
+  senderId: string
+  senderUsername: string
+  recipientId: string
+  recipientUsername: string
+  amount: number
+  reason?: string
+  timestamp: number
+  status: 'success' | 'failed' | 'pending'
+}
+
+interface TransactionStore {
+  transactions: Transaction[]
+  addTransaction: (transaction: Omit<Transaction, 'id' | 'timestamp'>) => void
+  loadTransactions: () => void
+  clearTransactions: () => void
+}
+
+export const useTransactionStore = create<TransactionStore>((set) => ({
+  transactions: [],
+  addTransaction: (transaction) =>
+    set((state) => {
+      const newTransaction: Transaction = {
+        ...transaction,
+        id: Date.now().toString(),
+        timestamp: Date.now(),
+      }
+      const updated = [newTransaction, ...state.transactions].slice(0, 50) // Keep last 50 transactions
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('pl_bank_transactions', JSON.stringify(updated))
+      }
+      return { transactions: updated }
+    }),
+  loadTransactions: () =>
+    set(() => {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('pl_bank_transactions')
+        if (stored) {
+          try {
+            return { transactions: JSON.parse(stored) }
+          } catch (e) {
+            console.error('Failed to parse transactions from localStorage:', e)
+          }
+        }
+      }
+      return {}
+    }),
+  clearTransactions: () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('pl_bank_transactions')
+    }
+    set({ transactions: [] })
+  },
+}))
