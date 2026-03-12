@@ -1,9 +1,14 @@
 'use client'
 
 import { signIn } from 'next-auth/react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { useState } from 'react'
+import { 
+  ShieldCheck, 
+  Cpu, 
+  LockKeyhole,
+  CreditCard,
+  Gamepad2
+} from 'lucide-react'
 
 export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false)
@@ -15,34 +20,119 @@ export default function SignIn() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
-      <Card className="w-full max-w-md p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">PL Bank</h1>
-          <p className="text-slate-400">Secure Financial Management</p>
+    <div className="min-h-screen bg-[#0B0F1A] text-slate-200 font-sans selection:bg-blue-500/30 flex overflow-hidden">
+      
+      {/* Left Column: Branding & Features (Desktop Only) */}
+      <div className="hidden lg:flex w-1/2 relative flex-col justify-between p-12 overflow-hidden border-r border-slate-800/50">
+        {/* Background Gradients */}
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-5%] right-[-5%] w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-[100px]" />
+
+        {/* Brand Logo */}
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-400 rounded-xl flex items-center justify-center shadow-lg">
+            <CreditCard className="text-white w-7 h-7" />
+          </div>
+          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+            PL BANK
+          </span>
         </div>
 
-        <div className="space-y-4">
-          <Button
-            onClick={handleSignIn}
-            disabled={isLoading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6"
-          >
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M20.444 15.356h-.976v-2.696c0-.656-.264-1.164-.915-1.164-.5 0-.895.336-.1042 1.009v2.851h-.976v-5.368h.976v.461h.014c.145-.218.537-.461 1.107-.461 1.18 0 2.076.772 2.076 2.428v2.94zM9.153 9.5c-.305 0-.552.246-.552.552 0 .305.246.552.552.552.305 0 .552-.246.552-.552 0-.305-.246-.552-.552-.552zm.487 5.856H8.666v-5.368h.974v5.368zM13.116 9.067c-1.527 0-2.766.785-2.766 1.756 0 .97 1.24 1.757 2.766 1.757s2.766-.787 2.766-1.757c-.001-.971-1.24-1.756-2.766-1.756zm0 2.793c-.83 0-1.509-.327-1.509-.73 0-.404.68-.73 1.509-.73s1.509.326 1.509.73c0 .403-.68.73-1.509.73zm5.846-2.793c-1.527 0-2.766.785-2.766 1.756 0 .97 1.24 1.757 2.766 1.757s2.766-.787 2.766-1.757c0-.971-1.24-1.756-2.766-1.756zm0 2.793c-.83 0-1.509-.327-1.509-.73 0-.404.68-.73 1.509-.73s1.509.326 1.509.73c0 .403-.68.73-1.509.73zM8.291 2C3.741 2 0 5.741 0 10.291v7.418C0 22.259 3.741 26 8.291 26h7.418C20.259 26 24 22.259 24 17.709v-7.418C24 5.741 20.259 2 15.709 2H8.291z" />
-            </svg>
-            {isLoading ? 'Signing in...' : 'Sign in with Discord'}
-          </Button>
+        {/* Hero Content */}
+        <div className="relative z-10 space-y-6">
+          <h2 className="text-6xl font-extrabold leading-tight text-white">
+            Banking for <br />
+            <span className="text-blue-500">Cyber Citizens.</span>
+          </h2>
+          <p className="text-slate-400 text-lg max-w-sm leading-relaxed">
+            Advanced banking system for developers and gamers. Multi-layer security, real-time transactions.
+          </p>
+          
+          <div className="grid grid-cols-2 gap-4 pt-8">
+            <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800 backdrop-blur-md hover:border-blue-500/50 transition-colors cursor-default">
+              <ShieldCheck className="text-blue-500 mb-3 w-6 h-6" />
+              <h4 className="text-white font-bold">End-to-End</h4>
+              <p className="text-xs text-slate-500 font-medium">Military-grade encryption</p>
+            </div>
+            <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800 backdrop-blur-md hover:border-indigo-400/50 transition-colors cursor-default">
+              <Cpu className="text-indigo-400 mb-3 w-6 h-6" />
+              <h4 className="text-white font-bold">Low Latency</h4>
+              <p className="text-xs text-slate-500 font-medium">Ultra-fast node processing</p>
+            </div>
+          </div>
         </div>
 
-        <p className="text-center text-slate-400 text-sm mt-6">
-          By signing in, you agree to our terms of service and privacy policy.
-        </p>
-      </Card>
+        <div className="relative z-10 text-sm text-slate-500 font-medium">
+          © 2025 PL BANK • Next-gen Financial Solutions
+        </div>
+      </div>
+
+      {/* Right Column: Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative">
+        <div className="lg:hidden absolute inset-0 overflow-hidden -z-10">
+           <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/15 rounded-full blur-3xl" />
+        </div>
+
+        <div className="w-full max-w-md space-y-8">
+          {/* Header */}
+          <div className="text-center lg:text-left space-y-2">
+            <h1 className="text-4xl font-black text-white tracking-tight">Login Portal</h1>
+            <p className="text-slate-400 font-medium">Authenticate your account to access Dashboard.</p>
+          </div>
+
+          <div className="bg-slate-900/60 border border-slate-800 p-10 rounded-[2.5rem] backdrop-blur-2xl shadow-2xl relative group overflow-hidden">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2.5rem] opacity-0 group-hover:opacity-10 transition duration-500"></div>
+            
+            <div className="relative z-10">
+              <div className="space-y-6">
+                <button
+                  onClick={handleSignIn}
+                  disabled={isLoading}
+                  className="flex items-center justify-center px-6 py-4 rounded-2xl font-semibold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none bg-[#5865F2] hover:bg-[#4752C4] text-white shadow-xl shadow-indigo-500/20 w-full group/btn"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-3">
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Connecting...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <Gamepad2 className="w-6 h-6 group-hover/btn:rotate-12 transition-transform" />
+                      <span>Continue with Discord</span>
+                    </div>
+                  )}
+                </button>
+
+                <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                  <p className="text-[12px] text-blue-400/80 text-center leading-relaxed">
+                    Using <b>Discord OAuth2</b> for absolute security. We never collect personal passwords.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-10 pt-8 border-t border-slate-800/50">
+                <div className="flex items-start gap-4">
+                   <div className="p-2 bg-slate-800 rounded-lg">
+                      <LockKeyhole className="w-5 h-5 text-slate-400" />
+                   </div>
+                   <div className="space-y-1">
+                     <h5 className="text-xs font-bold text-slate-300">Safe & Secure</h5>
+                     <p className="text-[11px] text-slate-500 leading-normal">
+                       PL BANK complies with international regulations protecting user privacy.
+                     </p>
+                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer links */}
+          <div className="flex justify-center lg:justify-start gap-8 px-2">
+            <button className="text-xs font-bold text-slate-600 hover:text-blue-400 transition-colors uppercase tracking-widest">Support</button>
+            <button className="text-xs font-bold text-slate-600 hover:text-blue-400 transition-colors uppercase tracking-widest">System Status</button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
