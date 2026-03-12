@@ -186,7 +186,7 @@ export function TransferForm() {
           <div className="p-4 bg-slate-700/50 border border-slate-600 rounded-lg flex items-center gap-4">
             {selectedMember.avatar && (
               <img
-                src={selectedMember.avatar}
+                src={`https://cdn.discordapp.com/avatars/${selectedMember.id}/${selectedMember.avatar}.png`}
                 alt={selectedMember.displayName}
                 className="w-12 h-12 rounded-full ring-2 ring-blue-500"
               />
