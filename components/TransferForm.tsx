@@ -148,7 +148,7 @@ export function TransferForm() {
               className="w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-400 rounded-md pl-10 pr-3 py-2 text-sm focus:outline-none focus:border-blue-500"
             />
           </div>
-          
+
           <Select value={selectedUserId} onValueChange={(value) => setValue('toUserId', value)}>
             <SelectTrigger className="w-full bg-slate-700 border-slate-600 text-white">
               <SelectValue placeholder="Select a member" />
@@ -164,7 +164,7 @@ export function TransferForm() {
                     <div className="flex items-center gap-2">
                       {member.avatar && (
                         <img
-                          src={member.avatar}
+                          src={`https://cdn.discordapp.com/avatars/${member.id}/${member.avatar}.png`}
                           alt={member.displayName}
                           className="w-5 h-5 rounded-full"
                         />
