@@ -59,7 +59,7 @@ export default async function DashboardPage() {
             <h2 className="text-2xl font-bold text-white mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link href="/transfer" className="block">
-                <Button className="w-full h-24 bg-blue-600 hover:bg-blue-700 text-white flex flex-col gap-2">
+                <Button className="w-full h-24 bg-emerald-600 hover:bg-emerald-700 text-white flex flex-col gap-2">
                   <ArrowRightLeft className="w-6 h-6" />
                   <span>Transfer Money</span>
                 </Button>

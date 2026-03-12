@@ -145,7 +145,7 @@ export function TransferForm() {
               placeholder="Search members..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-400 rounded-md pl-10 pr-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+              className="w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-400 rounded-md pl-10 pr-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
             />
           </div>
 
@@ -188,7 +188,7 @@ export function TransferForm() {
               <img
                 src={`https://cdn.discordapp.com/avatars/${selectedMember.id}/${selectedMember.avatar}.png`}
                 alt={selectedMember.displayName}
-                className="w-12 h-12 rounded-full ring-2 ring-blue-500"
+                className="w-12 h-12 rounded-full ring-2 ring-emerald-500"
               />
             )}
             <div className="flex-1">
@@ -228,7 +228,7 @@ export function TransferForm() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6"
+          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-6"
         >
           {isLoading ? 'Processing...' : 'Transfer Money'}
         </Button>
