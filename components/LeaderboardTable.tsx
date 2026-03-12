@@ -47,19 +47,19 @@ export function LeaderboardTable() {
           <table className="w-full">
             <thead className="sticky top-0 bg-slate-900/95 z-10">
               <tr className="border-b border-slate-700">
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-300">
+                <th className="px-3 sm:px-6 py-3 text-left text-xs sm:text-sm font-semibold text-slate-300">
                   Rank
                 </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-300">
+                <th className="px-3 sm:px-6 py-3 text-left text-xs sm:text-sm font-semibold text-slate-300">
                   User
                 </th>
-                <th className="px-6 py-3 text-right text-sm font-semibold text-slate-300">
+                <th className="px-2 sm:px-6 py-3 text-right text-xs sm:text-sm font-semibold text-slate-300">
                   Cash
                 </th>
-                <th className="px-6 py-3 text-right text-sm font-semibold text-slate-300">
+                <th className="hidden sm:table-cell px-6 py-3 text-right text-sm font-semibold text-slate-300">
                   Bank
                 </th>
-                <th className="px-6 py-3 text-right text-sm font-semibold text-slate-300">
+                <th className="px-2 sm:px-6 py-3 text-right text-xs sm:text-sm font-semibold text-slate-300">
                   Total
                 </th>
               </tr>
@@ -80,37 +80,37 @@ export function LeaderboardTable() {
                       animationDelay: `${index * 30}ms`,
                     }}
                   >
-                    <td className="px-6 py-4 text-white font-semibold">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-white font-semibold text-sm">
                       <div className="flex items-center gap-2">
                         {user.rank <= 3 && (
-                          <Trophy className="w-4 h-4 text-yellow-500 animate-pulse" />
+                          <Trophy className="w-3 sm:w-4 h-3 sm:h-4 text-yellow-500 animate-pulse flex-shrink-0" />
                         )}
-                        #{user.rank}
+                        <span className="truncate">#{user.rank}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-white">
-                      <div className="flex items-center gap-3">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-white text-sm">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                         {user.avatar ? (
                           <img
                             src={`https://cdn.discordapp.com/avatars/${user.user_id}/${user.avatar}.png`}
                             alt={user.username}
-                            className="w-8 h-8 rounded-full ring-2 ring-slate-700 hover:ring-slate-600 transition-all"
+                            className="w-6 h-6 sm:w-8 sm:h-8 rounded-full ring-2 ring-slate-700 hover:ring-slate-600 transition-all flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-semibold">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-semibold flex-shrink-0">
                             {user.username.charAt(0).toUpperCase()}
                           </div>
                         )}
-                        <span className="font-medium truncate">{user.username}</span>
+                        <span className="font-medium truncate text-xs sm:text-base">{user.username}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right text-green-400 font-semibold">
+                    <td className="px-2 sm:px-6 py-3 sm:py-4 text-right text-green-400 font-semibold text-xs sm:text-base">
                       {user.cash.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-right text-blue-400 font-semibold">
+                    <td className="hidden sm:table-cell px-6 py-4 text-right text-blue-400 font-semibold">
                       {user.bank.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-right text-purple-400 font-semibold">
+                    <td className="px-2 sm:px-6 py-3 sm:py-4 text-right text-purple-400 font-semibold text-xs sm:text-base">
                       {user.total.toLocaleString()}
                     </td>
                   </tr>

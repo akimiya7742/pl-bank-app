@@ -131,11 +131,11 @@ export function TransferForm() {
   }
 
   return (
-    <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <Card className="p-4 sm:p-6 bg-gradient-to-br from-slate-800 to-slate-900">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
         {/* Recipient Selection with Search */}
         <div className="space-y-2">
-          <label className="text-white font-semibold">Recipient</label>
+          <label className="text-white font-semibold text-sm sm:text-base">Recipient</label>
           <div className="relative">
             <div className="absolute left-3 top-3 text-slate-400">
               <Search className="w-4 h-4" />
@@ -183,7 +183,7 @@ export function TransferForm() {
 
         {/* Selected Member Preview */}
         {selectedMember && (
-          <div className="p-4 bg-slate-700/50 border border-slate-600 rounded-lg flex items-center gap-4">
+          <div className="p-3 sm:p-4 bg-slate-700/50 border border-slate-600 rounded-lg flex flex-col sm:flex-row items-center sm:items-center gap-3 sm:gap-4">
             {selectedMember.avatar && (
               <img
                 src={`https://cdn.discordapp.com/avatars/${selectedMember.id}/${selectedMember.avatar}.png`}
@@ -200,26 +200,26 @@ export function TransferForm() {
 
         {/* Amount Input */}
         <div className="space-y-2">
-          <label className="text-white font-semibold">Amount</label>
+          <label className="text-white font-semibold text-sm sm:text-base">Amount</label>
           <Input
             type="number"
             step="1"
             placeholder="0"
-            className="bg-slate-700 border-slate-600 text-white"
+            className="bg-slate-700 border-slate-600 text-white text-sm"
             {...register('amount', { valueAsNumber: true })}
           />
           {errors.amount && (
-            <p className="text-red-400 text-sm">{errors.amount.message}</p>
+            <p className="text-red-400 text-xs sm:text-sm">{errors.amount.message}</p>
           )}
         </div>
 
         {/* Reason Input (Optional) */}
         <div className="space-y-2">
-          <label className="text-white font-semibold">Reason (Optional)</label>
+          <label className="text-white font-semibold text-sm sm:text-base">Reason (Optional)</label>
           <Input
             type="text"
             placeholder="Transfer reason"
-            className="bg-slate-700 border-slate-600 text-white"
+            className="bg-slate-700 border-slate-600 text-white text-sm"
             {...register('reason')}
           />
         </div>
@@ -228,7 +228,7 @@ export function TransferForm() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-6"
+          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-5 sm:py-6 text-sm sm:text-base"
         >
           {isLoading ? 'Processing...' : 'Transfer Money'}
         </Button>

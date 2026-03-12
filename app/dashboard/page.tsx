@@ -21,24 +21,24 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="space-y-8">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
+        <div className="space-y-6 sm:space-y-8">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <h1 className="text-4xl font-bold text-white">PL Bank</h1>
-            <nav className="flex gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <h1 className="text-3xl sm:text-4xl font-bold text-white">PL Bank</h1>
+            <nav className="flex flex-wrap gap-2 sm:gap-4">
               <Link href="/dashboard">
-                <Button variant="ghost" className="text-white">
+                <Button variant="ghost" className="text-white text-sm sm:text-base">
                   Dashboard
                 </Button>
               </Link>
               <Link href="/transfer">
-                <Button variant="ghost" className="text-white">
+                <Button variant="ghost" className="text-white text-sm sm:text-base">
                   Transfer
                 </Button>
               </Link>
               <Link href="/leaderboard">
-                <Button variant="ghost" className="text-white">
+                <Button variant="ghost" className="text-white text-sm sm:text-base">
                   Leaderboard
                 </Button>
               </Link>

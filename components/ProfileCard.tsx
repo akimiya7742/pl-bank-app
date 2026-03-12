@@ -24,30 +24,30 @@ export function ProfileCard() {
   }
 
   return (
-    <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900">
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
+    <Card className="p-4 sm:p-6 bg-gradient-to-br from-slate-800 to-slate-900">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3 sm:gap-4 flex-1">
           {session.user.image && (
             <Image
               src={session.user.image}
               alt={session.user.name || 'User'}
               width={48}
               height={48}
-              className="rounded-full"
+              className="rounded-full flex-shrink-0"
             />
           )}
-          <div>
-            <h2 className="text-xl font-bold text-white">
+          <div className="min-w-0">
+            <h2 className="text-lg sm:text-xl font-bold text-white truncate">
               {session.user.name}
             </h2>
-            <p className="text-sm text-slate-400">{session.user.email}</p>
+            <p className="text-xs sm:text-sm text-slate-400 truncate">{session.user.email}</p>
           </div>
         </div>
         <Button
           variant="outline"
           size="sm"
           onClick={() => signOut()}
-          className="text-red-400 border-red-400 hover:bg-red-400/10"
+          className="text-red-400 border-red-400 hover:bg-red-400/10 text-xs sm:text-sm"
         >
           Sign Out
         </Button>
