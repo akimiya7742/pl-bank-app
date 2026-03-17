@@ -31,6 +31,19 @@ export interface DiscordMember {
   nick: string | null
 }
 
+export interface ShopItem {
+  id: number
+  name: string
+  price: number
+  description: string
+}
+
+export interface UserInventoryItem {
+  item_id: number
+  name: string
+  amount: number
+}
+
 async function makeUnbelievaBoatRequest(
   endpoint: string,
   method: string = 'GET',
@@ -188,4 +201,38 @@ export async function getDiscordUser(userId: string): Promise<{
     username: user.username,
     avatar: user.avatar,
   }
+}
+
+export async function getShopItems(limit: number = 100, page: number = 1): Promise<ShopItem[]> {
+  const data = await makeUnbelievaBoatRequest(
+    `/guilds/${GUILD_ID}/items?sort=id&limit=${limit}&page=${page}`
+  )
+
+  return (data.items || []).map((item: any) => ({
+    id: item.id,
+    name: item.name,
+    price: item.price,
+    description: item.description || '',
+  }))
+}
+
+export async function getUserInventory(userId: string, limit: number = 100, page: number = 1): Promise<UserInventoryItem[]> {
+  const data = await makeUnbelievaBoatRequest(
+    `/guilds/${GUILD_ID}/users/${userId}/inventory?sort=id&limit=${limit}&page=${page}`
+  )
+
+  return (data.items || []).map((item: any) => ({
+    item_id: item.item_id,
+    name: item.name,
+    amount: item.amount || 0,
+  }))
+}
+
+export async function purchaseItem(userId: string, itemId: number, quantity: number = 1): Promise<boolean> {
+  const response = await makeUnbelievaBoatRequest(
+    `/guilds/${GUILD_ID}/users/${userId}/inventory/${itemId}`,
+    'PATCH',
+    { amount: quantity }
+  )
+  return !!response
 }
