@@ -68,10 +68,13 @@ export const useBalanceStore = create<BalanceStore>((set) => ({
 
 export interface Transaction {
   id: string
+  type: 'transfer' | 'purchase' | 'income'
   senderId: string
   senderUsername: string
-  recipientId: string
-  recipientUsername: string
+  recipientId?: string
+  recipientUsername?: string
+  itemName?: string
+  itemId?: number
   amount: number
   reason?: string
   timestamp: number
