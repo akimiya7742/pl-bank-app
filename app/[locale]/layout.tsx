@@ -2,6 +2,8 @@ import { Providers } from '@/components/providers'
 import { Analytics } from '@vercel/analytics/next'
 import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
+import { NextIntlClientProvider } from 'next-intl'
+import { getMessages } from 'next-intl/server'
 
 const locales = ['en', 'vi']
 
@@ -24,12 +26,16 @@ export default async function LocaleLayout({
     notFound()
   }
 
+  const messages = await getMessages()
+
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
-        <Providers>
-          {children}
-        </Providers>
+        <NextIntlClientProvider messages={messages}>
+          <Providers>
+            {children}
+          </Providers>
+        </NextIntlClientProvider>
         <Analytics />
       </body>
     </html>
