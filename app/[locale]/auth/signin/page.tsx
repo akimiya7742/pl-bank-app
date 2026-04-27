@@ -1,7 +1,8 @@
 'use client'
 
 import { signIn } from 'next-auth/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import {
   ShieldCheck,
   Cpu,
@@ -11,16 +12,61 @@ import {
 } from 'lucide-react'
 
 export default function SignIn() {
+  const params = useParams()
+  const locale = (params.locale as string) || 'en'
   const [isLoading, setIsLoading] = useState(false)
+
+  const content = {
+    en: {
+      hero_title: 'Banking for',
+      hero_subtitle: 'Cyber Citizens.',
+      hero_description: 'Advanced banking system for developers and gamers. Multi-layer security, real-time transactions.',
+      feature1_title: 'End-to-End',
+      feature1_desc: 'Military-grade encryption',
+      feature2_title: 'Low Latency',
+      feature2_desc: 'Ultra-fast node processing',
+      copyright: '© 2025 PL BANK • Next-gen Financial Solutions',
+      login_title: 'Login Portal',
+      login_desc: 'Authenticate your account to access Dashboard.',
+      signin_button: 'Continue with Discord',
+      signin_loading: 'Connecting...',
+      oauth_text: 'Using Discord OAuth2 for absolute security. We never collect personal passwords.',
+      security_title: 'Safe & Secure',
+      security_desc: 'PL BANK complies with international regulations protecting user privacy.',
+      support: 'Support',
+      status: 'System Status',
+    },
+    vi: {
+      hero_title: 'Ngân hàng cho',
+      hero_subtitle: 'Công dân Cyber.',
+      hero_description: 'Hệ thống ngân hàng tiên tiến cho nhà phát triển và game thủ. Bảo mật đa lớp, giao dịch thời gian thực.',
+      feature1_title: 'Từ đầu đến cuối',
+      feature1_desc: 'Mã hóa cấp quân sự',
+      feature2_title: 'Độ trễ thấp',
+      feature2_desc: 'Xử lý nút siêu nhanh',
+      copyright: '© 2025 PL BANK • Giải pháp Tài chính Thế hệ Mới',
+      login_title: 'Cổng Đăng nhập',
+      login_desc: 'Xác thực tài khoản của bạn để truy cập Bảng điều khiển.',
+      signin_button: 'Tiếp tục với Discord',
+      signin_loading: 'Đang kết nối...',
+      oauth_text: 'Sử dụng Discord OAuth2 để bảo mật tuyệt đối. Chúng tôi không bao giờ thu thập mật khẩu cá nhân.',
+      security_title: 'An toàn & Bảo mật',
+      security_desc: 'PL BANK tuân thủ các quy định quốc tế bảo vệ quyền riêng tư của người dùng.',
+      support: 'Hỗ trợ',
+      status: 'Trạng thái Hệ thống',
+    },
+  }
+
+  const text = content[locale as keyof typeof content] || content.en
 
   const handleSignIn = async () => {
     setIsLoading(true)
-    await signIn('discord', { redirectTo: '/dashboard' })
+    await signIn('discord', { redirectTo: `/${locale}/dashboard` })
     setIsLoading(false)
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0F1A] text-slate-200 font-sans selection:bg-emerald-500/30 flex overflow-hidden">
+    <div className="min-h-screen bg-[#0B0F1A] text-slate-200 font-sans selection:bg-emerald-500/30 flex overflow-hidden dark">
 
       {/* Left Column: Branding & Features (Desktop Only) */}
       <div className="hidden lg:flex w-1/2 relative flex-col justify-between p-12 overflow-hidden border-r border-slate-800/50">
@@ -41,29 +87,29 @@ export default function SignIn() {
         {/* Hero Content */}
         <div className="relative z-10 space-y-6">
           <h2 className="text-6xl font-extrabold leading-tight text-white">
-            Banking for <br />
-            <span className="text-emerald-500">Cyber Citizens.</span>
+            {text.hero_title} <br />
+            <span className="text-emerald-500">{text.hero_subtitle}</span>
           </h2>
           <p className="text-slate-400 text-lg max-w-sm leading-relaxed">
-            Advanced banking system for developers and gamers. Multi-layer security, real-time transactions.
+            {text.hero_description}
           </p>
 
           <div className="grid grid-cols-2 gap-4 pt-8">
             <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800 backdrop-blur-md hover:border-emerald-500/50 transition-colors cursor-default">
               <ShieldCheck className="text-emerald-500 mb-3 w-6 h-6" />
-              <h4 className="text-white font-bold">End-to-End</h4>
-              <p className="text-xs text-slate-500 font-medium">Military-grade encryption</p>
+              <h4 className="text-white font-bold">{text.feature1_title}</h4>
+              <p className="text-xs text-slate-500 font-medium">{text.feature1_desc}</p>
             </div>
             <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800 backdrop-blur-md hover:border-teal-400/50 transition-colors cursor-default">
               <Cpu className="text-teal-400 mb-3 w-6 h-6" />
-              <h4 className="text-white font-bold">Low Latency</h4>
-              <p className="text-xs text-slate-500 font-medium">Ultra-fast node processing</p>
+              <h4 className="text-white font-bold">{text.feature2_title}</h4>
+              <p className="text-xs text-slate-500 font-medium">{text.feature2_desc}</p>
             </div>
           </div>
         </div>
 
         <div className="relative z-10 text-sm text-slate-500 font-medium">
-          © 2025 PL BANK • Next-gen Financial Solutions
+          {text.copyright}
         </div>
       </div>
 
@@ -76,8 +122,8 @@ export default function SignIn() {
         <div className="w-full max-w-md space-y-8">
           {/* Header */}
           <div className="text-center lg:text-left space-y-2">
-            <h1 className="text-4xl font-black text-white tracking-tight">Login Portal</h1>
-            <p className="text-slate-400 font-medium">Authenticate your account to access Dashboard.</p>
+            <h1 className="text-4xl font-black text-white tracking-tight">{text.login_title}</h1>
+            <p className="text-slate-400 font-medium">{text.login_desc}</p>
           </div>
 
           <div className="bg-slate-900/60 border border-slate-800 p-10 rounded-[2.5rem] backdrop-blur-2xl shadow-2xl relative group overflow-hidden">
@@ -93,19 +139,19 @@ export default function SignIn() {
                   {isLoading ? (
                     <div className="flex items-center gap-3">
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Connecting...</span>
+                      <span>{text.signin_loading}</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-3">
                       <Gamepad2 className="w-6 h-6 group-hover/btn:rotate-12 transition-transform" />
-                      <span>Continue with Discord</span>
+                      <span>{text.signin_button}</span>
                     </div>
                   )}
                 </button>
 
                 <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
                   <p className="text-[12px] text-emerald-400/80 text-center leading-relaxed">
-                    Using <b>Discord OAuth2</b> for absolute security. We never collect personal passwords.
+                    {text.oauth_text}
                   </p>
                 </div>
               </div>
@@ -116,9 +162,9 @@ export default function SignIn() {
                     <LockKeyhole className="w-5 h-5 text-slate-400" />
                   </div>
                   <div className="space-y-1">
-                    <h5 className="text-xs font-bold text-slate-300">Safe & Secure</h5>
+                    <h5 className="text-xs font-bold text-slate-300">{text.security_title}</h5>
                     <p className="text-[11px] text-slate-500 leading-normal">
-                      PL BANK complies with international regulations protecting user privacy.
+                      {text.security_desc}
                     </p>
                   </div>
                 </div>
@@ -128,8 +174,8 @@ export default function SignIn() {
 
           {/* Footer links */}
           <div className="flex justify-center lg:justify-start gap-8 px-2">
-            <button className="text-xs font-bold text-slate-600 hover:text-emerald-400 transition-colors uppercase tracking-widest">Support</button>
-            <button className="text-xs font-bold text-slate-600 hover:text-emerald-400 transition-colors uppercase tracking-widest">System Status</button>
+            <button className="text-xs font-bold text-slate-600 hover:text-emerald-400 transition-colors uppercase tracking-widest">{text.support}</button>
+            <button className="text-xs font-bold text-slate-600 hover:text-emerald-400 transition-colors uppercase tracking-widest">{text.status}</button>
           </div>
         </div>
       </div>
