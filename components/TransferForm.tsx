@@ -21,8 +21,8 @@ import {
 import { Search, Send, Banknote, MessageSquare, User } from 'lucide-react'
 
 const transferSchema = z.object({
-  toUserId: z.string().min(1, 'Vui lòng chọn người nhận'),
-  amount: z.number().positive('Số tiền phải lớn hơn 0'),
+  toUserId: z.string().min(1, 'Chọn người nhận'),
+  amount: z.number().positive('Số tiền > 0'),
   reason: z.string().optional(),
 })
 
@@ -46,11 +46,7 @@ export function TransferForm() {
     reset,
   } = useForm<TransferFormData>({
     resolver: zodResolver(transferSchema),
-    defaultValues: {
-      toUserId: '',
-      amount: 0,
-      reason: '',
-    },
+    defaultValues: { toUserId: '', amount: 0, reason: '' },
   })
 
   const selectedUserId = watch('toUserId')
@@ -58,10 +54,8 @@ export function TransferForm() {
 
   const filteredMembers = useMemo(() => {
     if (!searchQuery) return members
-    return members.filter(
-      (m) =>
-        m.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        m.id.includes(searchQuery)
+    return members.filter((m) =>
+        m.displayName.toLowerCase().includes(searchQuery.toLowerCase()) || m.id.includes(searchQuery)
     )
   }, [members, searchQuery])
 
@@ -73,162 +67,121 @@ export function TransferForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Giao dịch thất bại')
-      }
-
-      const recipient = members.find((m) => m.id === data.toUserId)
-      addNotification('success', 'Thành công', `Đã chuyển ${data.amount} đến ${recipient?.displayName}`)
-
-      if (session?.user?.id && recipient) {
-        addTransaction({
-          senderId: session.user.id,
-          senderUsername: session.user.name || 'Unknown',
-          recipientId: data.toUserId,
-          recipientUsername: recipient.displayName,
-          amount: data.amount,
-          reason: data.reason,
-          status: 'success',
-        })
-      }
-
+      if (!response.ok) throw new Error('Giao dịch thất bại')
+      
+      addNotification('success', 'Thành công', 'Đã chuyển tiền thành công')
       await refetchBalance()
       reset()
-      setSearchQuery('')
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Lỗi không xác định'
-      addNotification('error', 'Lỗi giao dịch', message)
+      addNotification('error', 'Lỗi', 'Không thể thực hiện giao dịch')
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <Card className="overflow-hidden border-none shadow-2xl bg-[#1D1B20] text-[#E6E1E5] rounded-[32px]">
-      <div className="p-6 sm:p-8">
-        <div className="flex items-center gap-3 mb-8">
+    <Card className="max-w-xl border-none shadow-none bg-[#231F20] text-[#E6E1E5] rounded-[40px] p-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        
+        {/* Header: Icon + Title */}
+        <div className="flex items-center gap-4 mb-4">
           <div className="p-3 bg-[#D0BCFF] rounded-2xl text-[#381E72]">
-            <Send className="w-6 h-6" />
+            <Send className="w-6 h-6 fill-current" />
           </div>
-          <h2 className="text-2xl font-medium tracking-tight">Chuyển tiền</h2>
+          <h2 className="text-2xl font-normal">Chuyển tiền</h2>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        {/* Section: Người nhận */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-[#938F99] text-[11px] font-bold uppercase tracking-widest">
+            <User className="w-3.5 h-3.5" />
+            NGƯỜI NHẬN
+          </div>
           
-          {/* Recipient Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#D0BCFF] mb-1">
-              <User className="w-4 h-4" />
-              <span className="text-sm font-medium uppercase tracking-wider">Người nhận</span>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="relative group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#938F99] group-focus-within:text-[#D0BCFF] transition-colors" />
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#2B2930] border-none rounded-2xl pl-11 pr-4 py-4 text-sm focus:ring-2 focus:ring-[#D0BCFF] transition-all outline-none placeholder-[#938F99]"
-                />
-              </div>
-
-              <Select value={selectedUserId} onValueChange={(value) => setValue('toUserId', value)}>
-                <SelectTrigger className="h-[52px] bg-[#2B2930] border-none rounded-2xl focus:ring-2 focus:ring-[#D0BCFF] text-[#E6E1E5]">
-                  <SelectValue placeholder="Chọn thành viên" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#2B2930] border-[#49454F] text-[#E6E1E5] rounded-xl">
-                  {filteredMembers.map((member) => (
-                    <SelectItem key={member.id} value={member.id} className="focus:bg-[#49454F] rounded-lg">
-                      <div className="flex items-center gap-2">
-                        {member.avatar && (
-                          <img
-                            src={`https://cdn.discordapp.com/avatars/${member.id}/${member.avatar}.png`}
-                            alt=""
-                            className="w-6 h-6 rounded-full"
-                          />
-                        )}
-                        <span>{member.displayName}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            {errors.toUserId && <p className="text-[#F2B8B5] text-xs ml-2">{errors.toUserId.message}</p>}
-          </div>
-
-          {/* Selected Member Preview - Material "Surface" style */}
-          {selectedMember && (
-            <div className="p-4 bg-[#49454F]/30 border border-[#49454F] rounded-[24px] flex items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="relative">
-                <img
-                  src={`https://cdn.discordapp.com/avatars/${selectedMember.id}/${selectedMember.avatar}.png`}
-                  alt={selectedMember.displayName}
-                  className="w-14 h-14 rounded-2xl object-cover"
-                />
-                <div className="absolute -bottom-1 -right-1 bg-[#D0BCFF] p-1 rounded-lg">
-                   <User className="w-3 h-3 text-[#381E72]" />
-                </div>
-              </div>
-              <div>
-                <p className="text-[#D0BCFF] text-xs font-medium">Đang chuyển đến</p>
-                <p className="text-xl font-semibold">{selectedMember.displayName}</p>
-                <p className="text-[#938F99] text-xs font-mono">ID: {selectedMember.id}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Inputs Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-[#D0BCFF] mb-1">
-                <Banknote className="w-4 h-4" />
-                <span className="text-sm font-medium uppercase tracking-wider">Số tiền</span>
-              </div>
-              <Input
-                type="number"
-                placeholder="0.00"
-                className="h-[56px] bg-[#2B2930] border-none rounded-2xl text-lg font-semibold focus:ring-2 focus:ring-[#D0BCFF] transition-all"
-                {...register('amount', { valueAsNumber: true })}
-              />
-              {errors.amount && <p className="text-[#F2B8B5] text-xs">{errors.amount.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-[#D0BCFF] mb-1">
-                <MessageSquare className="w-4 h-4" />
-                <span className="text-sm font-medium uppercase tracking-wider">Lời nhắn</span>
-              </div>
-              <Input
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="relative flex-1 min-w-[200px]">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#938F99]" />
+              <input
                 type="text"
-                placeholder="Ghi chú giao dịch..."
-                className="h-[56px] bg-[#2B2930] border-none rounded-2xl focus:ring-2 focus:ring-[#D0BCFF] transition-all"
-                {...register('reason')}
+                placeholder="yuna"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-[#36343B] border-none rounded-2xl pl-11 pr-4 py-3 text-sm focus:ring-1 focus:ring-[#D0BCFF] outline-none placeholder-[#938F99]"
               />
             </div>
+
+            <Select value={selectedUserId} onValueChange={(value) => setValue('toUserId', value)}>
+              <SelectTrigger className="w-fit min-w-[140px] h-[48px] bg-transparent border-none text-[#E6E1E5] hover:bg-[#36343B] rounded-xl transition-colors">
+                <SelectValue placeholder="Chọn thành viên" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#36343B] border-[#49454F] text-[#E6E1E5]">
+                {filteredMembers.map((m) => (
+                  <SelectItem key={m.id} value={m.id}>{m.displayName}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Selected Member Preview Box */}
+        {selectedMember && (
+          <div className="p-5 bg-[#36343B]/50 border border-[#49454F] rounded-[28px] flex items-center gap-4 animate-in fade-in zoom-in-95 duration-300">
+            <div className="relative">
+              <img
+                src={`https://cdn.discordapp.com/avatars/${selectedMember.id}/${selectedMember.avatar}.png`}
+                alt=""
+                className="w-12 h-12 rounded-2xl object-cover"
+              />
+              <div className="absolute -bottom-1 -right-1 bg-[#D0BCFF] p-1 rounded-full border-2 border-[#231F20]">
+                 <User className="w-2.5 h-2.5 text-[#381E72] fill-current" />
+              </div>
+            </div>
+            <div className="space-y-0.5">
+              <p className="text-[#D0BCFF] text-[10px] font-medium leading-none">Đang chuyển đến</p>
+              <p className="text-lg font-bold text-white tracking-tight">{selectedMember.displayName}</p>
+              <p className="text-[#938F99] text-[9px] font-mono leading-none uppercase">ID: {selectedMember.id}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Inputs: Số tiền & Lời nhắn */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-[#938F99] text-[11px] font-bold uppercase tracking-widest">
+              <Banknote className="w-3.5 h-3.5" />
+              SỐ TIỀN
+            </div>
+            <Input
+              type="number"
+              placeholder="0"
+              className="h-[52px] bg-[#36343B]/30 border-none rounded-2xl text-white focus:ring-1 focus:ring-[#D0BCFF]"
+              {...register('amount', { valueAsNumber: true })}
+            />
           </div>
 
-          {/* Submit Button - Dynamic elevation & scale */}
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full h-16 bg-[#D0BCFF] hover:bg-[#B69DF8] text-[#381E72] rounded-[20px] text-lg font-bold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 shadow-lg shadow-purple-950/20"
-          >
-            {isLoading ? (
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 border-3 border-[#381E72]/30 border-t-[#381E72] rounded-full animate-spin" />
-                Đang xử lý...
-              </div>
-            ) : (
-              'Xác nhận giao dịch'
-            )}
-          </Button>
-        </form>
-      </div>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-[#938F99] text-[11px] font-bold uppercase tracking-widest">
+              <MessageSquare className="w-3.5 h-3.5" />
+              LỜI NHẮN
+            </div>
+            <Input
+              type="text"
+              placeholder="Ghi chú giao dịch..."
+              className="h-[52px] bg-[#36343B]/30 border-none rounded-2xl text-white focus:ring-1 focus:ring-[#D0BCFF]"
+              {...register('reason')}
+            />
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="w-full h-[56px] bg-[#D0BCFF] hover:bg-[#EADDFF] text-[#381E72] rounded-[18px] text-base font-bold transition-all active:scale-[0.97] mt-2"
+        >
+          {isLoading ? 'Đang xử lý...' : 'Xác nhận giao dịch'}
+        </Button>
+      </form>
     </Card>
   )
 }
