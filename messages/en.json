@@ -1,0 +1,46 @@
+{
+  "navigation": {
+    "dashboard": "Account Overview",
+    "transfer": "Quick Transfer",
+    "leaderboard": "View Other Members",
+    "shop": "Shop",
+    "history": "History"
+  },
+  "balance": {
+    "available": "Available Balance",
+    "wallet": "Wallet Balance",
+    "total": "Total Balance",
+    "currency": "PLD"
+  },
+  "transfer": {
+    "title": "Quick Transfer",
+    "recipient": "Recipient",
+    "amount": "Amount",
+    "content": "Transfer Content",
+    "submit": "Transfer",
+    "tax": "Pay Tax",
+    "taxAmount": "1,000,000 PLD"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "rank": "Rank",
+    "user": "Member",
+    "cash": "Available",
+    "bank": "Wallet",
+    "total": "Total"
+  },
+  "shop": {
+    "title": "Shop",
+    "buy": "Purchase",
+    "inventory": "My Items",
+    "price": "Price",
+    "amount": "Quantity"
+  },
+  "common": {
+    "loading": "Loading",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  }
+}
