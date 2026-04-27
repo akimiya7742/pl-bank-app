@@ -53,36 +53,33 @@ export function BalanceDisplay({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-      <Card className="p-4 sm:p-6 bg-gradient-to-br from-green-600/20 to-green-900/20 border-green-500/30 dark:from-green-900/30 dark:to-green-800/20">
-        <div className="space-y-2">
-          <p className="text-xs sm:text-sm text-green-400 dark:text-green-300">{labels.cash}</p>
-          <p className="text-2xl sm:text-3xl font-bold text-white dark:text-slate-100">
-            {cash.toLocaleString()}
-          </p>
-          <p className="text-xs text-green-300 dark:text-green-400">PLD</p>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Total Balance Card - Main Focus */}
+      <Card className="md:col-span-2 p-8 bg-gradient-to-br from-slate-800 to-slate-950 border-slate-700/50 shadow-2xl overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-32 -mt-32" />
+
+        <div className="relative z-10">
+          <p className="text-slate-400 font-medium mb-1">{labels.total}</p>
+          <div className="flex items-baseline gap-2">
+            <h3 className="text-5xl font-black text-white tracking-tighter">
+              {total.toLocaleString()}
+            </h3>
+            <span className="text-emerald-500 font-bold">PLD</span>
+          </div>
         </div>
       </Card>
 
-      <Card className="p-4 sm:p-6 bg-gradient-to-br from-emerald-600/20 to-emerald-900/20 border-emerald-500/30 dark:from-emerald-900/30 dark:to-emerald-800/20">
-        <div className="space-y-2">
-          <p className="text-xs sm:text-sm text-emerald-400 dark:text-emerald-300">{labels.bank}</p>
-          <p className="text-2xl sm:text-3xl font-bold text-white dark:text-slate-100">
-            {bank.toLocaleString()}
-          </p>
-          <p className="text-xs text-emerald-300 dark:text-emerald-400">PLD</p>
+      {/* Sub-balances */}
+      <div className="grid grid-cols-2 md:col-span-2 gap-4">
+        <div className="p-5 rounded-3xl bg-slate-900/50 border border-slate-800 hover:border-emerald-500/30 transition-colors">
+          <p className="text-xs text-slate-500 mb-2 uppercase tracking-widest">{labels.cash}</p>
+          <p className="text-xl font-bold text-slate-200">{cash.toLocaleString()} <span className="text-xs font-normal text-slate-500">PLD</span></p>
         </div>
-      </Card>
-
-      <Card className="p-4 sm:p-6 bg-gradient-to-br from-purple-600/20 to-purple-900/20 border-purple-500/30 dark:from-purple-900/30 dark:to-purple-800/20">
-        <div className="space-y-2">
-          <p className="text-xs sm:text-sm text-purple-400 dark:text-purple-300">{labels.total}</p>
-          <p className="text-2xl sm:text-3xl font-bold text-white dark:text-slate-100">
-            {total.toLocaleString()}
-          </p>
-          <p className="text-xs text-purple-300 dark:text-purple-400">PLD</p>
+        <div className="p-5 rounded-3xl bg-slate-900/50 border border-slate-800 hover:border-blue-500/30 transition-colors">
+          <p className="text-xs text-slate-500 mb-2 uppercase tracking-widest">{labels.bank}</p>
+          <p className="text-xl font-bold text-slate-200">{bank.toLocaleString()} <span className="text-xs font-normal text-slate-500">PLD</span></p>
         </div>
-      </Card>
+      </div>
     </div>
   )
 }
