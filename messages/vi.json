@@ -1,0 +1,46 @@
+{
+  "navigation": {
+    "dashboard": "Tổng quan tài khoản",
+    "transfer": "Chuyển khoản nhanh",
+    "leaderboard": "Xem số dư các thành viên khác",
+    "shop": "Cửa hàng",
+    "history": "Lịch sử"
+  },
+  "balance": {
+    "available": "Số dư khả dụng",
+    "wallet": "Số dư ví",
+    "total": "Tổng số dư",
+    "currency": "PLD"
+  },
+  "transfer": {
+    "title": "Chuyển khoản nhanh",
+    "recipient": "Người nhận",
+    "amount": "Số tiền",
+    "content": "Nội dung chuyển khoản",
+    "submit": "Chuyển khoản",
+    "tax": "Đóng thuế",
+    "taxAmount": "1.000.000 PLD"
+  },
+  "leaderboard": {
+    "title": "Bảng xếp hạng",
+    "rank": "Xếp hạng",
+    "user": "Thành viên",
+    "cash": "Khả dụng",
+    "bank": "Ví",
+    "total": "Tổng"
+  },
+  "shop": {
+    "title": "Cửa hàng",
+    "buy": "Mua",
+    "inventory": "Vật phẩm của tôi",
+    "price": "Giá",
+    "amount": "Số lượng"
+  },
+  "common": {
+    "loading": "Đang tải",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận"
+  }
+}
