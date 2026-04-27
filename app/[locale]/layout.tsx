@@ -1,42 +1,42 @@
-import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Providers } from '@/components/providers'
+import { Analytics } from '@vercel/analytics/next'
+import { notFound } from 'next/navigation'
+import { ReactNode } from 'react'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
-import './globals.css'
 
-const _geist = Geist({ subsets: ['latin'] })
-const _geistMono = Geist_Mono({ subsets: ['latin'] })
+const locales = ['en', 'vi']
 
-export const metadata: Metadata = {
-  title: 'PL Bank - Secure Financial Management',
-  description: 'Manage your economy with PL Bank - transfer money, view balances, and track leaderboards',
-  generator: 'v0.app',
-  icons: {
-    icon: [
-      { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
-      { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
-    ],
-    apple: '/apple-icon.png',
-  },
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }))
 }
 
-export default async function RootLayout({
+type LocaleLayoutProps = {
+  children: ReactNode
+  params: Promise<{ locale: string }>
+}
+
+export default async function LocaleLayout({
   children,
   params,
-}: Readonly<{
-  children: React.ReactNode
-  params: Promise<{ locale: string }>
-}>) {
+}: LocaleLayoutProps) {
   const { locale } = await params
-  const messages = await getMessages()
+
+  if (!locales.includes(locale)) {
+    notFound()
+  }
+
+  const messages = await getMessages({ locale })
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className="font-sans antialiased bg-slate-50 dark:bg-slate-950">
-        <NextIntlClientProvider messages={messages}>
-          {children}
+      <body>
+        <NextIntlClientProvider messages={messages} locale={locale}>
+          <Providers>
+            {children}
+          </Providers>
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   )
