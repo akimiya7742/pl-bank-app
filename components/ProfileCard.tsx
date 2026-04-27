@@ -4,53 +4,44 @@ import { useSession, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import Image from 'next/image'
+import { LogOut } from 'lucide-react'
 
+// components/ProfileCard.tsx
 export function ProfileCard() {
-  const { data: session, status } = useSession()
-
-  if (status === 'loading') {
-    return (
-      <Card className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-12 w-12 bg-slate-700 rounded-full" />
-          <div className="h-4 w-48 bg-slate-700 rounded" />
-        </div>
-      </Card>
-    )
-  }
-
-  if (!session?.user) {
-    return null
-  }
+  const { data: session } = useSession()
+  if (!session?.user) return null
 
   return (
-    <Card className="p-4 sm:p-6 bg-gradient-to-br from-slate-800 to-slate-900">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3 sm:gap-4 flex-1">
-          {session.user.image && (
+    <Card className="relative overflow-hidden border-slate-800 bg-slate-900/40 backdrop-blur-xl p-6">
+      <div className="absolute top-0 right-0 p-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => signOut()}
+          className="text-slate-500 hover:text-red-400 hover:bg-red-400/10"
+        >
+          <LogOut className="w-4 h-4" />
+        </Button>
+      </div>
+
+      <div className="flex flex-col items-center text-center space-y-4">
+        <div className="relative p-1 rounded-full bg-gradient-to-tr from-emerald-500 to-blue-500">
+          <div className="bg-slate-950 rounded-full p-1">
             <Image
-              src={session.user.image}
-              alt={session.user.name || 'User'}
-              width={48}
-              height={48}
-              className="rounded-full flex-shrink-0"
+              src={session.user.image || '/default-avatar.png'}
+              alt="Avatar"
+              width={80}
+              height={80}
+              className="rounded-full border-2 border-slate-900"
             />
-          )}
-          <div className="min-w-0">
-            <h2 className="text-lg sm:text-xl font-bold text-white truncate">
-              {session.user.name}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-400 truncate">{session.user.email}</p>
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => signOut()}
-          className="text-red-400 border-red-400 hover:bg-red-400/10 text-xs sm:text-sm"
-        >
-          Sign Out
-        </Button>
+
+        <div className="space-y-1">
+          <h2 className="text-xl font-bold text-white">{session.user.name}</h2>
+          <p className="text-xs font-mono text-slate-500 tracking-wider uppercase">Verified Member</p>
+          <p className="text-sm text-slate-400">{session.user.email}</p>
+        </div>
       </div>
     </Card>
   )
