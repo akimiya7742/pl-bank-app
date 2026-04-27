@@ -36,7 +36,7 @@ export function TaxPaymentButton({ locale }: { locale: string }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          recipientId: TAX_ACCOUNT_ID,
+          toUserId: TAX_ACCOUNT_ID,
           amount: TAX_AMOUNT,
           reason: locale === 'vi' ? 'Đóng thuế' : 'Tax Payment',
         }),
