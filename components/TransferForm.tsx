@@ -67,13 +67,29 @@ export function TransferForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
-      if (!response.ok) throw new Error('Giao dịch thất bại')
-      
-      addNotification('success', 'Thành công', 'Đã chuyển tiền thành công')
+  
+      if (!response.ok) throw new Error('Transaction failed')
+  
+      // 1. Thông báo cho User
+      addNotification('success', 'Thành công', `Đã chuyển ${data.amount} cho ${selectedMember?.displayName}`)
+  
+      // 2. Push vào lịch sử (Local Store)
+      addTransaction({
+        type: 'transfer',
+        senderId: session?.user?.id || 'unknown',
+        senderUsername: session?.user?.name || 'Tôi',
+        recipientId: data.toUserId,
+        recipientUsername: selectedMember?.displayName || 'Người nhận',
+        amount: data.amount,
+        reason: data.reason || 'Chuyển tiền',
+        status: 'success'
+      })
+  
+      // 3. Cập nhật lại số dư trên Header/UI
       await refetchBalance()
       reset()
     } catch (error) {
-      addNotification('error', 'Lỗi', 'Không thể thực hiện giao dịch')
+      addNotification('error', 'Lỗi', 'Giao dịch không thành công')
     } finally {
       setIsLoading(false)
     }
