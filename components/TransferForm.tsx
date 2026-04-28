@@ -71,7 +71,7 @@ export function TransferForm() {
       if (!response.ok) throw new Error('Transaction failed')
   
       // 1. Thông báo cho User
-      addNotification('success', 'Thành công', `Đã chuyển ${data.amount} cho ${selectedMember?.displayName}`)
+      addNotification('success', 'Thành công', `Đã chuyển ${data.amount} PLD cho ${selectedMember?.displayName}`)
   
       // 2. Push vào lịch sử (Local Store)
       addTransaction({
