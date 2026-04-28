@@ -19,7 +19,7 @@ export default function SignIn() {
   const content = {
     en: {
       hero_title: 'Banking for',
-      hero_subtitle: 'Cyber Citizens.',
+      hero_subtitle: 'Plains Citizens.',
       hero_description: 'Advanced banking system for developers and gamers. Multi-layer security, real-time transactions.',
       feature1_title: 'End-to-End',
       feature1_desc: 'Military-grade encryption',
@@ -38,8 +38,8 @@ export default function SignIn() {
     },
     vi: {
       hero_title: 'Ngân hàng cho',
-      hero_subtitle: 'Công dân Cyber.',
-      hero_description: 'Hệ thống ngân hàng tiên tiến cho nhà phát triển và game thủ. Bảo mật đa lớp, giao dịch thời gian thực.',
+      hero_subtitle: 'Công dân TP. Plains.',
+      hero_description: 'Hệ thống ngân hàng tiên tiến cho mọi công dân trong server. Bảo mật đa lớp, giao dịch thời gian thực.',
       feature1_title: 'Từ đầu đến cuối',
       feature1_desc: 'Mã hóa cấp quân sự',
       feature2_title: 'Độ trễ thấp',
